@@ -17,3 +17,23 @@ get_missing = function(data){
 }
 sparse_idx = get_missing(tab)
 tab_full = tab[,-sparse_idx]
+
+fill_mean = function(data, sparse_idx){
+    for (i in sparse_idx){
+        data[which(is.na(data[,i])),i] = mean(as.matrix(data[-which(is.na(data[,i])),i]))
+    }
+    return(data)
+}
+
+tab_mean_filled = fill_mean(tab, sparse_idx)
+
+fill_median = function(data, sparse_idx){
+    for (i in sparse_idx){
+        data[which(is.na(data[,i])),i] = median(as.matrix(data[-which(is.na(data[,i])),i]))
+    }
+    return(data)
+}
+
+
+
+tab_med_filled = fill_median(tab, sparse_idx)
