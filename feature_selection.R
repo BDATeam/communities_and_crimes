@@ -54,11 +54,13 @@ plot(importance)
 
 
 # FEATURE SELECTION - RECURSIVE FEATURE ELIMINATION (BACKWARD)
+max_number_of_features = 5
+
 
 # define the control using a random forest selection function
 control <- rfeControl(functions=rfFuncs, method="cv", number=10)
 # run the RFE algorithm
-results <- rfe(x, y, sizes = c(1,2),rfeControl=control)
+results <- rfe(x, y, sizes = c(1:max_number_of_features),rfeControl=control)
 # summarize the results
 print(results)
 # list the chosen features
