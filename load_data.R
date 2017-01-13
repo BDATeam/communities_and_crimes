@@ -14,3 +14,11 @@ non_pred_var <- c(1:5)
 non_pred <- communities[,non_pred_var]
 tab <- communities[,-non_pred_var]
 
+# Split Test / Train sets
+test_size = 0.2
+
+random_indexes = sample(nrow(tab))
+test_indexes = random_indexes[1:floor(test_size*nrow(tab))]
+
+tab_test = tab[test_indexes,]
+tab_train = tab[-test_indexes,]
