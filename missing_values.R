@@ -2,6 +2,12 @@
 #               MISSING VALUES
 #----------------------------------------------
 
+# Environment
+require("kknn")
+require("mclust")
+require("mix")
+
+
 # Get number of missing values and indexes of sparse columns
 get_missing = function(data){
     nas = rep(0,ncol(data))
@@ -25,7 +31,6 @@ tab_sparse = tab[,sparse_idx]
 
 
 # Fills sparse columns using nearest neighbours given their indexes
-require("kknn")
 fill_nn = function(data, sparse_idx){
     for (i in sparse_idx){
         pr_idx = which(is.na(data[,i]))
@@ -38,6 +43,11 @@ fill_nn = function(data, sparse_idx){
 }
 
 tab_knn_filled = fill_nn(tab, sparse_idx)
+
+
+# Fills sparse columns using gaussian mixture modeling
+tab_gm_filled = as.data.frame(imputeData(tab, categorical = NULL, seed = 7))
+
 
 # Fills sparse columns with their mean given their indexes
 fill_mean = function(data, sparse_idx){
@@ -58,3 +68,4 @@ fill_median = function(data, sparse_idx){
 }
 
 tab_med_filled = fill_median(tab, sparse_idx)
+

@@ -4,7 +4,7 @@
 
 
 #   Explore data
-summary(tab$OtherPerCap)
+summary(tab$ViolentCrimesPerPop)
 
 #   Define RMSE
 rmse = function(pred){return(sqrt(mean((pred-tab$ViolentCrimesPerPop)^2)))}
@@ -47,3 +47,5 @@ param = list(max_depth = 5)
 
 xgb_cv(data=tab, params = param, 20)
 xgb_cv(data=tab_full, params = param, 20)
+xgb_cv(data=tab_gm_filled, params = param, 20)
+xgb_cv(data=tab_knn_filled, params = param, 20)
