@@ -27,6 +27,38 @@ y = as.matrix(data[,ncol(data)])
 colnames(y) = colnames(data)[ncol(data)]
 
 
+feature_selection_data = function(data, number_of_features = 40, chosen_method = "lm"){
+  
+  # FUNCTION THAT RETURNS DATA AFTER A FEATURE SELECTION
+  
+  # data = input data (x and y together)
+  # number of features : nbr features to keep -> 40 is as good as all of the 100 features, but you can try lower
+  # chosen method : "lm", "rf", any regression method you want to apply
+  
+  control <- trainControl(method="repeatedcv", number=10, repeats=3)
+  model <- train(ViolentCrimesPerPop~., data = data, method = chosen_method, preProcess="scale", trControl=control)
+  importance <- varImp(model, scale=FALSE)
+
+  imp = importance$importance
+  colnames(imp) = "ImportanceValue"
+  imp$ColumnName = rownames(imp)
+  rownames(imp) = c()
+  imp_ordered = arrange(imp,desc(ImportanceValue))
+  imp_ordered$ImportanceRank = as.numeric(rownames(imp_ordered))
+  
+  selected_features = imp_ordered$ColumnName[1:number_of_features]
+  
+  return(data[,c(selected_features,"ViolentCrimesPerPop")])
+}
+
+
+
+
+
+
+
+
+
 
 # REMOVE REDUNDANT FEATURES
 
@@ -95,7 +127,7 @@ max_number_of_features = 5
 # define the control using a random forest selection function
 control <- rfeControl(functions=rfFuncs, method="cv", number=10)
 # run the RFE algorithm
-results <- rfe(x, y, sizes = c(1:max_number_of_features),rfeControl=control)
+results <- rfe(x, y, sizes = 1:max_number_of_features,rfeControl=control)
 # summarize the results
 print(results)
 # list the chosen features
