@@ -33,7 +33,7 @@ feature_selection_data = function(data, number_of_features = 40, chosen_method =
   
   # data = input data (x and y together)
   # number of features : nbr features to keep -> 40 is as good as all of the 100 features, but you can try lower
-  # chosen method : "lm", "rf", any regression method you want to apply
+  # chosen method : "lm", "rf", any regression method you want to apply. Warning: very slow with "rf"
   
   control <- trainControl(method="repeatedcv", number=10, repeats=3)
   model <- train(ViolentCrimesPerPop~., data = data, method = chosen_method, preProcess="scale", trControl=control)
@@ -67,7 +67,7 @@ correlationMatrix <- cor(x)
 # summarize the correlation matrix
 print(correlationMatrix)
 # find attributes that are highly corrected (ideally >0.75)
-highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
 # print indexes of highly correlated attributes
 print(highlyCorrelated)
 
