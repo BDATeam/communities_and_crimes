@@ -66,7 +66,7 @@ random_forest_cv(x,y,5)
 
 
 rmse_vector=numeric()
-ntree_vector = c(5,10,25)
+ntree_vector=c(5,10,25,50,75,100,150,200,300,500,700,1000)
 #ntree_vector=c(5,10,25,50,75,100,120,150,175,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000)
 
 for(ntree in ntree_vector){
