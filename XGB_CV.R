@@ -10,7 +10,8 @@ summary(tab$ViolentCrimesPerPop)
 
 #   Define error functions
 rmse = function(pred){return(sqrt(mean((pred-tab$ViolentCrimesPerPop)^2)))}
-
+rmse_test = function(pred){return(sqrt(mean((pred-tab_test$ViolentCrimesPerPop)^2)))}
+rmse_train = function(pred){return(sqrt(mean((pred-tab_train$ViolentCrimesPerPop)^2)))}
 
 xgb_cv = function(data,params, n_rounds){
     
@@ -74,3 +75,28 @@ mean(tab_gm_filledErr[,1])
 mean(tab_knn_filledErr[,1])
 mean(tab_med_filledErr[,1])
 mean(tab_mean_filledErr[,1])
+
+
+
+# On train & test data ----------------------------------------------
+
+final = function(tab_train, tab_test){
+    dtrain <- xgb.DMatrix(data = as.matrix(tab_train[,-ncol(tab_train)]), label = as.matrix(tab_train$ViolentCrimesPerPop))
+    dtest <- xgb.DMatrix(data = as.matrix(tab_test[,-ncol(tab_test)]), label = as.matrix(tab_test$ViolentCrimesPerPop))
+    para = list(max_depth = 3)
+    gbr = xgb.train(params = para, dtrain, nrounds=20)
+    print(rmse_train(predict(gbr, dtrain)))
+    print(rmse_test(predict(gbr, dtest)))
+
+    return(1)
+}
+
+final(tab_train, tab_test)
+final(tab_knn_train, tab_knn_test)
+
+
+
+
+
+
+
