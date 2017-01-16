@@ -37,7 +37,7 @@ global_NAs = sum(is.na(tab))/(sum(is.na(tab))+sum(!is.na(tab)))
 lemas_na = sparse_idx[-1]
 tab_lemas = tab[,lemas_na]
 
-aggr(tab_lemas, prop = F, numbers = T) 
+aggr(tab_sparse, prop = F, numbers = T, cex.axis = 0.40) 
 matrixplot(tab_lemas, interactive = F)
 
 na_idx = is.na(tab[,lemas_na[1]])
