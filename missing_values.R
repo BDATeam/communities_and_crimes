@@ -4,8 +4,7 @@
 
 # Environment
 require("kknn")
-require("mclust")
-require("mix")
+
 
 
 # Get number of missing values and indexes of sparse columns
@@ -26,26 +25,7 @@ sparse_idx = get_missing(tab)
 tab_full = tab[,-sparse_idx]
 tab_sparse = tab[,sparse_idx]
 
-#________________________________________________
-# Analysis 
-library("VIM")
 
-# Global ratio of NAs
-global_NAs = sum(is.na(tab))/(sum(is.na(tab))+sum(!is.na(tab)))
-
-# Missing values from Lemas survey
-lemas_na = sparse_idx[-1]
-tab_lemas = tab[,lemas_na]
-
-aggr(tab_sparse, prop = F, numbers = T, cex.axis = 0.40) 
-matrixplot(tab_lemas, interactive = F)
-
-na_idx = is.na(tab[,lemas_na[1]])
-
-matrixplot(tab_lemas[!na_idx,], interactive = F)
-
-
-hist(tab$LemasSwornFT[!na_idx])
 
 #________________________________________________
 # Imputation
@@ -65,6 +45,24 @@ fill_nn = function(data, sparse_idx){
 
 tab_knn_filled = fill_nn(tab, sparse_idx)
 
+tab_knn_train = tab_knn_filled[-test_indexes,]
+tab_knn_test = tab_knn_filled[test_indexes,]
+
+
+
+
+
+
+#_______________________________________________________________________________________________________
+# STOP HERE
+#_______________________________________________________________________________________________________
+#_______________________________________________________________________________________________________
+#
+
+
+
+require("mclust")
+require("mix")
 
 # Fills sparse columns using gaussian mixture modeling
 tab_gm_filled = as.data.frame(imputeData(tab, categorical = NULL, seed = 7))
@@ -89,4 +87,25 @@ fill_median = function(data, sparse_idx){
 }
 
 tab_med_filled = fill_median(tab, sparse_idx)
+
+#________________________________________________
+# Analysis 
+library("VIM")
+
+# Global ratio of NAs
+global_NAs = sum(is.na(tab))/(sum(is.na(tab))+sum(!is.na(tab)))
+
+# Missing values from Lemas survey
+lemas_na = sparse_idx[-1]
+tab_lemas = tab[,lemas_na]
+
+aggr(tab_sparse, prop = F, numbers = T, cex.axis = 0.40) 
+matrixplot(tab_lemas, interactive = F)
+
+na_idx = is.na(tab[,lemas_na[1]])
+
+matrixplot(tab_lemas[!na_idx,], interactive = F)
+
+
+hist(tab$LemasSwornFT[!na_idx])
 
