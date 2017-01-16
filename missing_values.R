@@ -20,8 +20,29 @@ sparse_idx = get_missing(tab)
 tab_full = tab[,-sparse_idx]
 tab_sparse = tab[,sparse_idx]
 
+#________________________________________________
+# Analysis 
+library("VIM")
 
-# Imputation ------------------------------------
+# Global ratio of NAs
+global_NAs = sum(is.na(tab))/(sum(is.na(tab))+sum(!is.na(tab)))
+
+# Missing values from Lemas survey
+lemas_na = sparse_idx[-1]
+tab_lemas = tab[,lemas_na]
+
+aggr(tab_lemas, prop = F, numbers = T) 
+matrixplot(tab_lemas, interactive = F)
+
+na_idx = is.na(tab[,lemas_na[1]])
+
+matrixplot(tab_lemas[!na_idx,], interactive = F)
+
+
+hist(tab$LemasSwornFT[!na_idx])
+
+#________________________________________________
+# Imputation
 
 
 # Fills sparse columns using nearest neighbours given their indexes
