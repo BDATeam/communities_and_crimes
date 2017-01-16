@@ -2,14 +2,28 @@
 library(randomForest)
 
 
-# Take out NA columns
-tab_train = tab_train[,colSums(is.na(tab_train))==0]
+# take out NA values
+tab_ = tab[,colSums(is.na(tab))==0]
+
+# Split Test / Train sets
+test_size = 0.2
+
+random_indexes = sample(nrow(tab_))
+test_indexes = random_indexes[1:floor(test_size*nrow(tab_))]
+tabTest = tab_[test_indexes,]
+tabTrain = tab_[-test_indexes,]
 
 
-# CREATE X and Y
-x = as.matrix(tab_train[,1:(ncol(tab_train)-1)])
-y = as.matrix(tab_train[,ncol(tab_train)])
-colnames(y) = colnames(tab_train)[ncol(tab_train)]
+
+# CREATE X and Y TRAIN
+x_train = as.matrix(tabTrain[,1:(ncol(tabTrain)-1)])
+y_train = as.matrix(tabTrain[,ncol(tabTrain)])
+colnames(y_train) = colnames(tabTrain)[ncol(tabTrain)]
+# CREATE X and Y TEST
+x_test = as.matrix(tabTest[,1:(ncol(tabTest)-1)])
+y_test = as.matrix(tabTest[,ncol(tabTest)])
+colnames(y_test) = colnames(tabTest)[ncol(tabTest)]
+
 
 #CROSS VALIDATION
 
@@ -57,9 +71,19 @@ random_forest_cv = function(x,y,ntree){
 
 
 # Quick Test
+random_forest_cv(x_train,y_train,5)
 
 
-random_forest_cv(x,y,5)
+# Test
+x_train_sc = scale(x_train)
+s = attr(x_train_sc, 'scaled:scale')
+m = attr(x_train_sc, 'scaled:center')
+x_test_sc = scale(x_test, center = m, scale = s)
+fit <- randomForest(x_train, y_train, ntree=1000)
+predictions = predict(fit, x_test)
+residuals = predictions - y_test
+rmse <- sqrt(mean((residuals)^2))
+print(rmse)
 
 
 # Random Forest -------------
@@ -70,8 +94,8 @@ ntree_vector=c(5,10,25,50,75,100,150,200,300,500,700,1000)
 #ntree_vector=c(5,10,25,50,75,100,120,150,175,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000)
 
 for(ntree in ntree_vector){
-  prediction = random_forest_cv(x,y,ntree)
-  residuals = prediction - y
+  prediction = random_forest_cv(x_train,y_train,ntree)
+  residuals = prediction - y_train
   rmse <- sqrt(mean((residuals)^2))
   print(rmse)
   rmse_vector = c(rmse_vector,rmse)
